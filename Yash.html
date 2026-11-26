@@ -1,1 +1,124 @@
-my Yash HTML 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Management System</title>
+<style>
+:root{--navy:#172554;--blue:#2563eb;--bg:#f3f6fc;--text:#172033;--muted:#64748b;--line:#e2e8f0;--white:#fff;--red:#dc2626;--green:#15803d}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+.app{min-height:100vh;display:flex}.sidebar{width:235px;background:var(--navy);color:white;padding:22px 15px;flex-shrink:0}
+.brand{font-size:20px;font-weight:700;margin:4px 8px 30px}.nav{display:block;width:100%;text-align:left;border:0;background:transparent;color:#dbeafe;padding:13px 14px;border-radius:9px;margin:7px 0;font-size:15px;cursor:pointer}.nav.active,.nav:hover{background:#29469a;color:#fff}
+main{flex:1;min-width:0;padding:28px;max-width:1500px;margin:auto;width:100%}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}.top h1{font-size:25px;margin:0}.sub{color:var(--muted);font-size:14px;margin-top:6px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:22px}.card,.panel{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:19px;box-shadow:0 3px 12px rgba(15,23,42,.04)}
+.card small{color:var(--muted);font-size:13px}.number{font-size:28px;font-weight:700;margin-top:10px}.status{color:var(--green);font-weight:700}
+.content{display:grid;grid-template-columns:minmax(280px, .85fr) minmax(0,1.6fr);gap:18px}.panel h2{font-size:18px;margin:0 0 16px}
+label{display:block;font-size:13px;font-weight:600;color:#475569;margin:12px 0 6px}
+input,select{width:100%;padding:12px 13px;border:1px solid #cbd5e1;border-radius:8px;background:white;font-size:15px;outline:none}
+input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #dbeafe}
+.actions{display:flex;gap:9px;margin-top:16px;flex-wrap:wrap}
+button{font:inherit}.btn{border:0;border-radius:8px;padding:11px 15px;background:var(--blue);color:white;font-weight:600;cursor:pointer}.btn:hover{filter:brightness(.94)}.btn.secondary{background:#e2e8f0;color:#1e293b}.btn.danger{background:#fee2e2;color:#991b1b}.btn.small{padding:7px 10px;font-size:13px}
+.tablehead{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:13px}.tablehead input{max-width:280px}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:610px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);font-size:14px}th{font-size:12px;color:#64748b;text-transform:uppercase;background:#f8fafc}td .actions{margin:0}
+.empty{text-align:center;color:var(--muted);padding:30px 10px}
+.notice{font-size:13px;color:var(--muted);margin-top:12px}
+.mobilebrand{display:none}
+@media(max-width:850px){.sidebar{width:185px}.content{grid-template-columns:1fr}main{padding:20px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.app{display:block}.sidebar{width:100%;padding:12px;display:flex;align-items:center;gap:8px;overflow-x:auto}.brand{font-size:16px;margin:0 8px;white-space:nowrap}.nav{width:auto;white-space:nowrap;margin:0;padding:10px 12px;font-size:13px}.nav:not(.active){display:none}.mobilebrand{display:block}.sidebar{justify-content:space-between}main{padding:15px}.top h1{font-size:21px}.cards{grid-template-columns:1fr 1fr;gap:10px}.card{padding:14px}.number{font-size:23px}.panel{padding:15px}.tablehead{display:block}.tablehead input{max-width:none;margin-top:10px}.top{align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">🎓 Student Admin</div>
+  <button class="nav active" type="button">📊 Dashboard</button>
+</aside>
+<main>
+  <div class="top">
+    <div><h1>Student Management System</h1><div class="sub">Manage student records in one place</div></div>
+    <button class="btn secondary" id="exportBtn" type="button">Export CSV</button>
+  </div>
+  <section class="cards">
+    <div class="card"><small>Total Students</small><div class="number" id="totalCount">0</div></div>
+    <div class="card"><small>System Status</small><div class="number status">Active</div></div>
+    <div class="card"><small>Courses</small><div class="number" id="courseCount">0</div></div>
+  </section>
+  <section class="content">
+    <div class="panel">
+      <h2 id="formTitle">➕ Add New Student</h2>
+      <form id="studentForm">
+        <input type="hidden" id="editId">
+        <label for="name">Full Name</label><input id="name" type="text" placeholder="Enter student name" required maxlength="80">
+        <label for="roll">Roll Number</label><input id="roll" type="text" placeholder="e.g. CSBS001" required maxlength="30">
+        <label for="email">Email Address</label><input id="email" type="email" placeholder="student@example.com" required maxlength="100">
+        <label for="course">Course / Branch</label><input id="course" type="text" placeholder="e.g. CSBS" required maxlength="60">
+        <div class="actions"><button class="btn" id="submitBtn" type="submit">Add Student</button><button class="btn secondary" id="cancelBtn" type="button" hidden>Cancel</button></div>
+      </form>
+      <div class="notice">Records are saved in this browser using local storage.</div>
+    </div>
+    <div class="panel">
+      <div class="tablehead"><h2>📋 Student Records</h2><input id="search" type="search" placeholder="Search name, roll, email or course..."></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Name</th><th>Roll Number</th><th>Email</th><th>Course</th><th>Actions</th></tr></thead>
+        <tbody id="studentRows"></tbody>
+      </table></div>
+      <div class="empty" id="emptyState">No students added yet. Add your first student using the form.</div>
+    </div>
+  </section>
+</main>
+</div>
+<script>
+const STORAGE_KEY = "studentManagementRecords_v1";
+let students = [];
+try { students = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); if (!Array.isArray(students)) students=[]; } catch(e) { students=[]; }
+const $ = id => document.getElementById(id);
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(students)); }
+function safe(value){ return String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function render(){
+  const q=$("search").value.trim().toLowerCase();
+  const filtered=students.filter(s=>[s.name,s.roll,s.email,s.course].some(v=>String(v).toLowerCase().includes(q)));
+  $("totalCount").textContent=students.length;
+  $("courseCount").textContent=new Set(students.map(s=>s.course.trim().toLowerCase()).filter(Boolean)).size;
+  $("studentRows").innerHTML=filtered.map(s=>`<tr>
+    <td>${safe(s.name)}</td><td>${safe(s.roll)}</td><td>${safe(s.email)}</td><td>${safe(s.course)}</td>
+    <td><div class="actions"><button class="btn small" type="button" data-edit="${s.id}">Edit</button><button class="btn small danger" type="button" data-delete="${s.id}">Delete</button></div></td>
+  </tr>`).join("");
+  $("emptyState").style.display=filtered.length?"none":"block";
+}
+function resetForm(){ $("studentForm").reset();$("editId").value="";$("formTitle").textContent="➕ Add New Student";$("submitBtn").textContent="Add Student";$("cancelBtn").hidden=true; }
+$("studentForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const id=$("editId").value;
+  const record={name:$("name").value.trim(),roll:$("roll").value.trim(),email:$("email").value.trim(),course:$("course").value.trim()};
+  if(!record.name||!record.roll||!record.email||!record.course){alert("Please fill all fields.");return;}
+  const duplicate=students.some(s=>s.roll.toLowerCase()===record.roll.toLowerCase()&&String(s.id)!==id);
+  if(duplicate){alert("This roll number already exists. Please use a unique roll number.");$("roll").focus();return;}
+  if(id){students=students.map(s=>String(s.id)===id?{...s,...record}:s);}else{record.id=Date.now().toString();students.push(record);}
+  save();render();resetForm();
+});
+$("studentRows").addEventListener("click",e=>{
+  const edit=e.target.closest("[data-edit]"),del=e.target.closest("[data-delete]");
+  if(edit){const s=students.find(x=>x.id===edit.dataset.edit);if(!s)return;
+    $("editId").value=s.id;$("name").value=s.name;$("roll").value=s.roll;$("email").value=s.email;$("course").value=s.course;
+    $("formTitle").textContent="✏️ Edit Student";$("submitBtn").textContent="Save Changes";$("cancelBtn").hidden=false;
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  if(del){const s=students.find(x=>x.id===del.dataset.delete);if(!s)return;
+    if(confirm(`Delete ${s.name}'s record? This cannot be undone.`)){students=students.filter(x=>x.id!==s.id);save();render();if($("editId").value===s.id)resetForm();}
+  }
+});
+$("cancelBtn").addEventListener("click",resetForm);
+$("search").addEventListener("input",render);
+$("exportBtn").addEventListener("click",()=>{
+  if(!students.length){alert("There are no student records to export.");return;}
+  const rows=[["Name","Roll Number","Email","Course"],...students.map(s=>[s.name,s.roll,s.email,s.course])];
+  const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="student-records.csv";a.click();URL.revokeObjectURL(url);
+});
+render();
+</script>
+</body>
+                        </html>
